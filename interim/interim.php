@@ -19,7 +19,7 @@ abstract class Widget{
    * To render itself, a widget should return the HTML that represents the widget's contents
    */
   abstract public function render();
-  
+
   abstract public function head();
   abstract public function foot();
 }
@@ -37,22 +37,22 @@ class VNCApplet extends SimpleWidget{
   public function VNCApplet( ReflectorSession $reflectorSession ){
     $this->reflectorSession = $reflectorSession;
   }
-  
-  
+
+
   public function render(){
     //Below is for noVNC version
      // return '<a href="https://vital.poly.edu/interim/noVNC/vnc_auto.html?host=vital.poly.edu&port='.$this->reflectorSession->getPort().'&encrypt=0&true_color=1&local_cursor=1&shared=1">Click to view your VM</a> ';
      /*return'
-        <font color="red"><strong>"If keyboard does not respond, please click on dark grey area to restore it." <a href="http://vital.poly.edu:6080/vnc_auto.html?host=vital.poly.edu&port='.$this->reflectorSession->getPort().'&encrypt=0&true_color=1&local_cursor=1&shared=1">If you are unable to view your VM, please click me</a></strong></font><iframe src="//vital.poly.edu/interim/noVNC/vnc_auto.html?host=vital.poly.edu&port='.$this->reflectorSession->getPort().'&encrypt=0&true_color=1&local_cursor=1&shared=1" width="1050" height="800"></iframe> 
+        <font color="red"><strong>"If keyboard does not respond, please click on dark grey area to restore it." <a href="http://vital.poly.edu:6080/vnc_auto.html?host=vital.poly.edu&port='.$this->reflectorSession->getPort().'&encrypt=0&true_color=1&local_cursor=1&shared=1">If you are unable to view your VM, please click me</a></strong></font><iframe src="//vital.poly.edu/interim/noVNC/vnc_auto.html?host=vital.poly.edu&port='.$this->reflectorSession->getPort().'&encrypt=0&true_color=1&local_cursor=1&shared=1" width="1050" height="800"></iframe>
            ';*/
     /* return '
 	<H2><a href="http://vital.poly.edu:6080/vnc_auto.html?host=vital.poly.edu&port='.$this->reflectorSession->getPort().'&encrypt=0&true_color=1&local_cursor=1&shared=1">Click here to view VM</a></H2>
 	';
    */
        return '
-        <H2><a href="http://vital.poly.edu:'.$this->reflectorSession->getPort().'/vnc_auto.html">Click here to view VM</a></H2>
+        <H1><a href="http://vital.poly.edu:'.$this->reflectorSession->getPort().'/vnc_auto.html">Click here to view VM</a></H1>
 	';
-        
+
    /*  return '<applet archive="VncViewer.jar"
       code="VncViewer.class" width="1200" height="1060">
       <param name="PORT" value="'.$this->reflectorSession->getPort().'"/>
@@ -66,7 +66,7 @@ class VNCApplet extends SimpleWidget{
     </applet>';
   */
   }
-  
+
   private $reflectorSession;
 }
 
@@ -74,7 +74,7 @@ class VNCFlash extends SimpleWidget{
   public function VNCFlash( $reflectorSession ){
     $this->reflectorSession = $reflectorSession;
   }
-  
+
   public function render(){
     return '
 <object width="550" height="400"
@@ -102,7 +102,7 @@ class VNCFlash extends SimpleWidget{
 ';
 
   }
-  
+
   private $reflectorSession;
 }
 
@@ -111,15 +111,15 @@ class VNCFlash extends SimpleWidget{
 
 class ListWidget extends ComplexWidget{
   public function ListWidget(){
-  
+
   }
-  
+
   public function render(){
     $rtrn = '<ul class="list_widget">';
     foreach( $this->widgets as $widget ) {
       $rtrn .= '<li>'.$widget->render().'</li>';
     }
-    
+
     $rtrn .= '</ul>';
     return $rtrn;
   }
@@ -130,11 +130,11 @@ abstract class EmbeddedWidget extends Widget{
   public function EmbeddedWidget( $widget ) {
     $this->widget = $widget;
   }
-  
+
   public function head(){
     return $widget->head();
   }
-  
+
   public function foot(){
     return $widget->foot();
   }
@@ -142,25 +142,25 @@ abstract class EmbeddedWidget extends Widget{
 
 class ToolBox extends ListWidget{
   private $title;
-  
+
   public function ToolBox( Widget $title ){
-    
+
     parent::ListWidget();
-    
+
     $this->title = $title;
   }
-  
+
   public function addTool( Widget $tool ) {
     $this->addWidget( $tool );
   }
-  
+
   public function render(){
     if ( !$this->isEmpty() ){
       $rtrn = '<div class="vm_controller_widget vlab_tool_box">'
         .'<h3>'.$this->title->render().'</h3>'
         .parent::render()
         .'</div>';
-      
+
       return $rtrn;
     }
       return '';
@@ -169,23 +169,23 @@ class ToolBox extends ListWidget{
 
 // class HREF{
   // public function HREF(){
-  
+
   // }
-  
+
   // public function toString(){
-    
+
   // }
-  
+
   // public function addVariable( $name, $value=null ){
-    
+
   // }
 // }
 
 // class Anchor extends SimpleWidget{
   // public Anchor($content, HREF $href){
-  
+
   // }
-  
+
   // public function render(){
     // return '<a class="anchor" href="'.$this->href.'">'.$this->content->render().'<a>';
   // }
@@ -193,13 +193,13 @@ class ToolBox extends ListWidget{
 
 class VMToolBox extends ToolBox{
   // private $reflectorSession;
-  
+
   public function VMToolBox( ReflectorSession $reflectorSession ){
     parent::ToolBox(new HTMLWidget('VM Control'));
-    
+
     $reflectorId = $reflectorSession->getReflectorId();
     $vm = new VM($reflectorSession->getVMId());
-    
+
     if ( !$vm->isStatePending() ) {
       //NOTE:strat ordered these stuff killed
       if ( !$vm->isStarted() ) {
@@ -208,7 +208,7 @@ class VMToolBox extends ToolBox{
         // $this->addTool(new HTMLWidget('<a href="?restart">Restart</a>'));
         $this->addTool(new HTMLWidget('<a class="double_check" href="?shutdown&amp;reflector='.$reflectorId.'">Power Off</a>'));
       }
-      
+
       $this->addTool(new HTMLWidget('<a href="?save&amp;reflector='.$reflectorId.'">Save</a>'));
       $this->addTool(new HTMLWidget('<a class="double_check" href="?restore&amp;reflector='.$reflectorId.'">Restore</a>'));
 #      $this->addTool(new HTMLWidget('<a href="#" onclick="return confirmReimage('.$reflectorId.', \''.$vm->getName().'\'); return false;">Reimage</a>'));
@@ -219,31 +219,31 @@ class VMToolBox extends ToolBox{
 
 class VMStatusBox extends SimpleWidget{
   private $vm;
-  
+
   public function VMStatusBox( VM $vm ){
     $this->vm = $vm;
   }
-  
+
   private function getVMStatus(){
     return $this->vm->getOperationString();
   }
-  
+
   public function render(){
     $class = $this->vm->isStatePending() ? 'power_semi' : ( $this->vm->isStarted() ? 'power_on' : 'power_off' );
     $class = $this->vm->isVMDisabled() ? 'vm_disabled' : $class;
     $rtrn = '';
     $rtrn .= '<div class="vlab_tool_box vlab_status_box"><h3>VM Status</h3>';
     $rtrn .= '<table style="width:100%;">';
-    
-    
+
+
     $rtrn .= '<tr><td>'.$this->vm->getBestName().'</th></tr>';
     $rtrn .= '<tr><td colspan="2" class="'.$class.'">'.$this->vm->getOperationString().'</td></tr>';
-    
+
     $rtrn .= '</table></div>';
-    
+
     return $rtrn;
   }
-  
+
 }
 
 class ReflectorSessionBusyBox extends Widget{
@@ -256,14 +256,14 @@ class ReflectorSessionBusyBox extends Widget{
   public function render(){
    $reflectorId = $this->reflectorSession->getReflectorId();
     $rtrn = '<div class="busy_widget">Please wait ... <a href="?cancel_request&amp;reflector='.$reflectorId.'">cancel</a></div>';
-    
+
     return $rtrn;
   }
-  
+
   public function head(){
     return '<meta http-equiv="refresh" content="3;" />';
   }
-  
+
   public function foot(){
     return '';
   }
@@ -276,14 +276,14 @@ class BusyBox extends Widget{
 
   public function render(){
     $rtrn = '<div class="busy_widget">Please wait ... </div>';
-    
+
     return $rtrn;
   }
-  
+
   public function head(){
     return '<meta http-equiv="refresh" content="3;" />';
   }
-  
+
   public function foot(){
     return '';
   }
@@ -292,20 +292,20 @@ class BusyBox extends Widget{
 
 abstract class ComplexWidget extends Widget{
   protected $widgets = array();
-  
+
   public function ComplexWidget(){
-    
+
   }
-  
+
   public function addWidget( $widget ) {
     array_push($this->widgets,$widget);
   }
-  
-  
+
+
   public function isEmpty(){
     return count($this->widgets)==0;
   }
-  
+
   public function head(){
     $rtrn = '';
     foreach( $this->widgets as $widget ){
@@ -313,7 +313,7 @@ abstract class ComplexWidget extends Widget{
     }
     return $rtrn;
   }
-  
+
   public function foot(){
     $rtrn = '';
     foreach( $this->widgets as $widget ){
@@ -330,13 +330,13 @@ class VerticalTabledComplexWidget extends ComplexWidget{
 
   public function render(){
     $rtrn = '<table class="widget_array">';
-    
+
     foreach( $this->widgets as $widget ){
       $rtrn .= '<tr><td>'.$widget->render().'</td></tr>';
     }
-    
+
     $rtrn .= '</table>';
-    
+
     return $rtrn;
   }
 }
@@ -348,13 +348,13 @@ class HorizontalComplexWidget extends ComplexWidget{
 
   public function render(){
     $rtrn = '<div>';
-    
+
     foreach( $this->widgets as $widget ){
       $rtrn .= '<div style="float:left;">'.$widget->render().'</div>';
     }
-    
+
     $rtrn .= '</div>';
-    
+
     return $rtrn;
   }
 }
@@ -367,14 +367,14 @@ class InterimWidget extends ComplexWidget{
     parent::ComplexWidget();
     $this->tools = $tools;
     $this->content = $content;
-    
+
     parent::addWidget($tools);
     parent::addWidget($content);
   }
-  
+
   public function render(){
     $rtrn = '<div class="body_div">';
-    
+
     $rtrn .= '<table style="width:100%;">
     <tr>
       <td style="">
@@ -394,7 +394,7 @@ class InterimWidget extends ComplexWidget{
     </tr>
   </table>';
     $rtrn .= '</div>';
-    
+
     return $rtrn;
   }
 }
@@ -404,7 +404,7 @@ class HTMLWidget extends SimpleWidget{
   public function HTMLWidget($html){
     $this->html = $html;
   }
-  
+
   public function render(){
     return $this->html;
   }
@@ -426,7 +426,7 @@ class InterimDashboard extends InterimWidget{
     $userToolBox->addTool( new HTMLWidget('<a href="" target="_self">Refresh Console</a>') );
 
     $tools->addWidget( $userToolBox );
- 
+
     parent::InterimWidget( $tools, $content );
   }
 }
@@ -435,9 +435,9 @@ class InterimVNCSessionBusyBox extends InterimDashboard{
   public function InterimVNCSessionBusyBox($vncReflector){
     $tools = new VerticalTabledComplexWidget();
     $content = new VerticalTabledComplexWidget();
-    
+
     $content->addWidget( new ReflectorSessionBusyBox($vncReflector) );
-    
+
 #    parent::InterimDashboard( $tools, $content, $username);
     parent::InterimDashboard( $tools, $content);
   }
@@ -445,27 +445,27 @@ class InterimVNCSessionBusyBox extends InterimDashboard{
 
 class InterimVNCSessionDashboard extends InterimDashboard{
   public function InterimVNCSessionDashboard( VM $vm, ReflectorSession $reflectorSession ){
-  
+
     $tools = new VerticalTabledComplexWidget();
     $content = new VerticalTabledComplexWidget();
-    
+
     parent::InterimDashboard( $tools, $content );
-    
+
     if ( $vm->isStarted() ){
-    
+
       $reflectorSession->setPass(substr(sha1('some interesting salt. ASFDFSDWERWEREWREWREWREWRWERWERWERRGFGVC'+mt_rand()), 0, 8 ));
-      
+
       $reflectorSession->restart();
 
       $vncApplet = new VNCApplet( $reflectorSession );
-      
+
       $content->addWidget( $vncApplet );
     }
-    
-    
+
+
     $vmToolBox = new VMToolBox( $reflectorSession );
     $vmStatusBox = new VMStatusBox( $vm );
-    
+
     $tools->addWidget( $vmStatusBox );
     $tools->addWidget( $vmToolBox );
   }
@@ -473,41 +473,41 @@ class InterimVNCSessionDashboard extends InterimDashboard{
 
 class ReflectorSessionControlWidget extends SimpleWidget{
   private $reflectorSession;
-  
+
   public function ReflectorSessionControlWidget( ReflectorSession $reflectorSession ){
     $this->reflectorSession =& $reflectorSession;
   }
-  
+
   public function render(){
     $vm_id = $this->reflectorSession->getVMId();
     $reflectorId = $this->reflectorSession->getReflectorId();
     $vm = new VM($vm_id);
-    
+
     $vmStatusBox = new VMStatusBox($vm);
-    
+
     $rtrn = '<div class="reflector_session_control_widget vlab_tool_box">'
       //.'<h3 style="text-align:center;margin:0;">VM: '.$vm->getName().'</h3>'
       .$vmStatusBox->render()
       .'<ul>'
       .'<li><a target="_blank" href="?reflector='.$reflectorId.'">View</a></li>';
-      
+
     if ( !$vm->isStatePending() ){
       if ( !$vm->isStarted() )
         $rtrn .= '<li><a target="_blank" href="?startup&amp;reflector='.$reflectorId.'">Power On</a></li>';
       else
         $rtrn .= '<li><a target="_blank" href="?stop&amp;reflector='.$reflectorId.'">Power off</a></li>';
-        
+
       $rtrn .= '<li><a target="_blank" href="?save&amp;reflector='.$reflectorId.'">Save</a></li>';
       $rtrn .= '<li><a target="_blank" href="?restore&amp;reflector='.$reflectorId.'">Restore</a></li>';
       $rtrn .= '<li><a target="_blank" href="?reimage&amp;reflector='.$reflectorId.'">Reimage</a></li>';
     }
-    
+
     $rtrn .= '</ul></div>';
-    
-    // $rtrn .= 
+
+    // $rtrn .=
     return $rtrn;
   }
-  
+
   public function head(){
     $vm_id = $this->reflectorSession->getVMId();
     $reflectorId = $this->reflectorSession->getReflectorId();
@@ -516,48 +516,48 @@ class ReflectorSessionControlWidget extends SimpleWidget{
     if ( $vm->isStatePending() ){
       return '<meta http-equiv="refresh" content="3;" />';
     }
-    
+
     return '';
   }
 }
 
 class InterimMultiVMDashboard extends InterimDashboard{
   public function InterimMultiVMDashboard( $reflectorSessions, $username ){
-  
+
     $tools = new VerticalTabledComplexWidget();
     $content = new HorizontalComplexWidget();
-    
+
     parent::InterimDashboard( $tools, $content, $username );
- 
+
     foreach ( $reflectorSessions as $reflectorSession ) {
       $content->addWidget( new ReflectorSessionControlWidget($reflectorSession) );
     }
   }
-  
+
 }
 
 /*
 class InterimVNCSessionDashboard extends InterimWidget{
   public function InterimVNCSessionDashboard( $vm, $reflectorSession ){
-  
+
     $content = new VerticalTabledComplexWidget();
     $tools = new VerticalTabledComplexWidget();
 
     if ( $vm->isStatePending() ) {
       $busyBox = new BusyBox();
-      
+
       $content->addWidget( $busyBox );
     } else if ( $vm->isStarted()  ){
 
 
       $reflectorSession->setPass(substr(sha1('some interesting salt. ASFDFSDWERWEREWREWREWREWRWERWERWERRGFGVC'+mt_rand()), 0, 8 ));
-      
+
       $reflectorSession->restart();
 
       $vncApplet = new VNCApplet( $reflectorSession );
-      
+
       $content->addWidget( $vncApplet );
-      
+
     }
 
 
@@ -572,7 +572,7 @@ class InterimVNCSessionDashboard extends InterimWidget{
     $tools->addWidget( $userToolBox );
     $tools->addWidget( $vmStatusBox );
     $tools->addWidget( $vmToolBox );
-    
+
     parent::InterimWidget( $tools, $content );
   }
 }
@@ -588,36 +588,36 @@ function main(){
 
 
   session_start();
-  
+
   $session_first_time = false;
   if ( !@$_SESSION['initialized'] ){
     $logger->info('Creating session');
     $_SESSION['initialized'] = true;
     $session_first_time = true;
   }
-  
+
   $logger->info('Session has begun; session_id: '.session_id());
-  
+
   $logger->info('REQUEST_URI: ' . $_SERVER['REQUEST_URI'] );
   $logger->info('HTTP_REFERER: '. (isset($_SERVER['HTTP_REFERER']) ? ($_SERVER['HTTP_REFERER']) : 'none') );
   $logger->info('HTTP_USER_AGENT: '.$_SERVER['HTTP_USER_AGENT']);
-  
-  
+
+
 
   $realm = 'VLAB';
 
   $sessionConf = SessionConfiguration::getInstance();
 
-  
-  
+
+
   // if ( isset($_GET['go_home']) ){
     // $logger->info('User is requesting to be redirected to home page');
     // header( 'Location: .' );
     // exit();
   // }
-  
 
-  
+
+
 
 
 
@@ -627,62 +627,62 @@ function main(){
   try {
     //Authenticate user
     $authentication = new Authentication( $sessionConf, $realm );
-    
+
     $logger->info('User is authenticated');
-    
+
     if ( isset($_GET['logged_out']) ){
       //If the user is supposed to be logged out
       $logger->info('User is using logout method');
-      
+
       //Redirect the user to the main page with anonymous user/pass
       $logger->info('Redirect the user with anonymous credentials');
       header( 'Location: https://anonymous:anonymous@'.$_SERVER['SERVER_NAME'].'/interim.php?go_home' );
-      
-      
+
+
       exit();
     }
     if ( isset($_GET['go_home']) ){
       header( 'Location: .' );
       exit();
     }
-    
+
   } catch (Exception $e){
     //If the user failed authentication
     $logger->warn('User has failed authentication');
-    
+
     if ( isset($_GET['logout']) ){
       header( 'Location: .');
     }
-  
+
     echo '<html><head><title>Unauthorized</title></head><body><h1>Unauthorized</h1><p>Please go to the <a href="./">home page</a>.</p>
      </body></html>';
     exit();
   }
 
 
-  $username = $authentication->getUsername();	
-  
+  $username = $authentication->getUsername();
+
   $vncReflectorIds = $sessionConf->getReflectorIds($username);
-  
+
   $vncReflectorId = null;
-  
+
   if ( isset( $_GET['reflector'] ) ) {
     $vncReflectorId = $_GET['reflector'];
-    
+
     if ( in_array( $vncReflectorId, $vncReflectorIds ) ) {
       $vncReflectorIds = array( $vncReflectorId );
     }
   }
-  
-  
-  
+
+
+
   $vncReflectorSessions = array();
   foreach ( $vncReflectorIds as $vncReflectorId ) {
     array_push( $vncReflectorSessions, new DBReflectorSession( $vncReflectorId ) );
   }
-  
+
   $vm_id = null;
-  
+
   if ( isset( $_GET['vm'] ) ) {
     $vm_id = $_GET['vm'];
 
@@ -693,27 +693,27 @@ function main(){
       }
     }
   }
-  
-  
+
+
   if ( isset($_GET['logout']) ){
     $logger->info('User is requesting to be logged out');
-    
+
     $logger->info('Destroying session');
     session_destroy();
     session_unset();
     setcookie (session_name(), '', -1, '/');
-    
+
     foreach ($vncReflectorSessions as $vncReflectorSession){
       $vncReflectorSession->stop();
     }
-    
+
     header( 'Location: ?logged_out' );
     exit();
   }
-  
-  
-  
-  
+
+
+
+
   // $reflectorSession = new DBReflectorSession($vncReflectorId);
 
   // $vm = new VM( $reflectorSession->GetVMId() );
@@ -721,12 +721,12 @@ function main(){
   foreach ($vncReflectorSessions as $vncReflectorSession){
     array_push( $vms, new VM( $vncReflectorSession->getVMId() ) );
   }
-  
+
   if ( isset($_GET['restart']) ){
     foreach( $vms as $vm ){
       $vm->restart();
     }
-    
+
     header( 'Location: ?'.($vncReflectorId ? 'reflector='.$vncReflectorId : '' ) );
     exit();
   }
@@ -735,17 +735,17 @@ function main(){
     foreach( $vms as $vm ){
       $vm->startup();
     }
-    
+
     header( 'Location: ?'.($vncReflectorId ? 'reflector='.$vncReflectorId : '' ) );
     exit();
   }
 
   if ( isset($_GET['cancel_request']) ){
-    
+
     foreach( $vms as $vm ){
       $vm->cancelPendingState();
     }
-    
+
     header( 'Location: ?'.($vncReflectorId ? 'reflector='.$vncReflectorId : '' ) );
     exit();
   }
@@ -754,11 +754,11 @@ function main(){
     foreach ($vncReflectorSessions as $vncReflectorSession){
       $vncReflectorSession->stop();
     }
-    
+
     foreach( $vms as $vm ){
       $vm->shutdown();
     }
-    
+
     header( 'Location: ?'.($vncReflectorId ? 'reflector='.$vncReflectorId : '' ) );
     exit();
   }
@@ -767,7 +767,7 @@ function main(){
     foreach( $vms as $vm ){
       $vm->save();
     }
-    
+
     header( 'Location: ?'.($vncReflectorId ? 'reflector='.$vncReflectorId : '' ) );
     exit();
   }
@@ -776,7 +776,7 @@ function main(){
     foreach( $vms as $vm ){
       $vm->restore();
     }
-    
+
     header( 'Location: ?'.($vncReflectorId ? 'reflector='.$vncReflectorId : '' ) );
     exit();
   }
@@ -785,19 +785,19 @@ function main(){
     foreach( $vms as $vm ){
       $vm->reimage();
     }
-     
+
     header( 'Location: ?'.($vncReflectorId ? 'reflector='.$vncReflectorId : '' ) );
     exit();
   }
 
   if ( count( $vncReflectorSessions ) > 1 ){
-    
+
     display( new InterimMultiVMDashboard($vncReflectorSessions, $username) );
-  
+
   } else {
     $vncReflectorSession = $vncReflectorSessions[ 0 ];
     $vm = new VM( $vncReflectorSession->getVMId() );
-    
+
     if ( $vm->isStatePending() ) {
       display( new InterimVNCSessionBusyBox($vncReflectorSession) );
     } else {
@@ -810,7 +810,7 @@ function main(){
 try{
   $logger =& Logger::getLogger('main');
   SessionConfiguration::createInstance( new DBSessionConfiguration() );
-  
+
   $logger->debug('starting main()');
   main();
 } catch ( Exception $e ){
