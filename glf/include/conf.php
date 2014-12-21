@@ -1,7 +1,7 @@
 <?php
 /*?TODO here is where you configure how many students max the trade off is
  * more max students, less vms you can use, due to port # restrictions */
-$MAX_NUM_STUDENTS = 500;
+$MAX_NUM_STUDENTS = 1000;
 
 $config = array();
 
