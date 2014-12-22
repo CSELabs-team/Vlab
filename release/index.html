@@ -417,7 +417,7 @@
                               size="3"><span
                                 style="font-style: normal"><span
                                   style="font-weight: normal">.</span></span></font></font></font></span></p>
-    
+
                         </div>
                       <div id="tabs-2">
                             <p class="western" style="margin-top: 0.17in; line-height: 0.22in"><font style="font-weight: bold;"
@@ -2831,7 +2831,7 @@
                               color="#000000"><font
                                 face="Arial, sans-serif"><font
                                   size="3">&nbsp;</font></font></font></span></p>
-    
+
                       </div>
                     </div>
                     <div id="vlab_page"> <span style="font-size:small; color:black;">
@@ -2846,7 +2846,7 @@
                       <a href="https://vital.poly.edu/release/labs"><h3>Lab Assignments</h3></a>
                       <a href="https://vital.poly.edu/release/Vlab_Bundle.zip"><h3>Source Code</h3></a>
                       <p>If you encounter any issues or have any feature
-                        requests, please contact vital@isis.poly.edu </a></p>
+                        requests, please contact cselabs-team-group@nyu.edu </a></p>
                     </div>
                   </td>
                 </tr>
@@ -2865,10 +2865,10 @@ $('.inField').show().fadeTo(100,.6).focus( function(){
     //When the field has not yet been set,
     //Set the first value as its canned value.
     this.canned_data = $(this).val();
-    
+
     //Empty the field so the user can type the real value.
     $(this).val('');
-    
+
     //Bring the field into full visual focus.
     $(this).fadeTo(100,1);
   }
@@ -2876,13 +2876,13 @@ $('.inField').show().fadeTo(100,.6).focus( function(){
   //When the field is blurred,
   if ( this.canned_data != undefined && $(this).val()== '' ){
     //If the field has a canned value, and the current value is not empty,
-    
+
     //Fade back out of visual focus.
     $(this).fadeTo(100,.6);
-    
+
     //Set the value back to the canned data.
     $(this).val( this.canned_data );
-    
+
     //Set the canned data back to nothing
     //FIXME:do we need this?
     // this.canned_data = undefined;
@@ -2895,10 +2895,10 @@ $('.pinField').show().fadeTo(100,.6).focus( function(){
     //When the field has not yet been set,
     //Set the first value as its canned value.
     this.canned_data = $(this).val();
-    
+
     //Empty the field so the user can type the real value.
     $(this).val('');
-    
+
     //Bring the field into full visual focus.
     $(this).fadeTo(100,1);
   }
@@ -2915,7 +2915,7 @@ $(document).ready( function(){
     $(this).css('left', '-' + $(document).width() + 'px');
     $(this).animate(
       {
-        
+
         left : '' + 0 + 'px',
         opacity : 1.0
       }, 1500
